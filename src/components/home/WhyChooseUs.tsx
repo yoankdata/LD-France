@@ -55,7 +55,7 @@ export function WhyChooseUs() {
                     {features.map((feature, i) => (
                         <div
                             key={i}
-                            className={`group relative bg-slate-50/50 border border-slate-100 p-10 hover:bg-white hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] transition-all duration-500 ease-in-out ${feature.className}`}
+                            className={`group relative bg-slate-50/50 border border-slate-100 p-6 md:p-10 hover:bg-white hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] transition-all duration-500 ease-in-out ${feature.className}`}
                         >
                             <div className="flex justify-between items-start mb-12">
                                 <div className="p-3 bg-white shadow-sm rounded-none border border-slate-100 group-hover:border-blue-200 transition-colors">

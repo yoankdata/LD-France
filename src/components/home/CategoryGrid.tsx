@@ -49,7 +49,7 @@ export function CategoryGrid() {
                     {categories.map((cat, i) => (
                         <div
                             key={i}
-                            className={`group relative overflow-hidden bg-slate-100 min-h-[400px] flex flex-col justify-end p-8 ${cat.size}`}
+                            className={`group relative overflow-hidden bg-slate-100 min-h-[300px] md:min-h-[400px] flex flex-col justify-end p-6 md:p-8 ${cat.size}`}
                         >
                             {/* Image de fond avec overlay progressif */}
                             <Image

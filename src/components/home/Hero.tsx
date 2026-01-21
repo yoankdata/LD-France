@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 
 export function Hero() {
     return (
-        <section className="relative w-full min-h-[85vh] bg-white flex flex-col justify-center overflow-hidden pt-48 pb-24">
+        <section className="relative w-full min-h-[70vh] md:min-h-[85vh] bg-white flex flex-col justify-center overflow-hidden pt-32 md:pt-48 pb-16 md:pb-24">
 
             {/* Arrière-plan épuré - Suppression de la Grid et ajout d'un dégradé radial très subtil */}
             <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-blue-50/50 via-transparent to-transparent"></div>
@@ -21,12 +21,12 @@ export function Hero() {
                             Logistique France & Europe
                         </div>
 
-                        <h1 className="text-5xl md:text-7xl font-bold text-slate-900 leading-[1.05] tracking-tight">
+                        <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold text-slate-900 leading-[1.05] tracking-tight">
                             Grossiste B2B <br />
                             <span className="text-slate-400">Produits FMCG.</span>
                         </h1>
 
-                        <p className="text-xl text-slate-600 font-light leading-relaxed max-w-xl">
+                        <p className="text-lg md:text-xl text-slate-600 font-light leading-relaxed max-w-xl">
                             LD France sécurise votre chaîne d'approvisionnement en <strong>produits d'hygiène et K-Beauty</strong>. Un stock localisé en région parisienne pour une réactivité totale.
                         </p>
 
@@ -64,8 +64,8 @@ export function Hero() {
                         </div>
                     </div>
 
-                    {/* Right Visual (Cols 8-12) - Dashboard Card */}
-                    <div className="lg:col-span-5 relative group">
+                    {/* Right Visual (Cols 8-12) - Dashboard Card - Hidden on mobile */}
+                    <div className="hidden lg:block lg:col-span-5 relative group">
                         <div className="absolute -inset-4 bg-blue-600/5 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
 
                         <div className="relative bg-white border border-slate-100 shadow-[0_40px_80px_-15px_rgba(0,0,0,0.08)] rounded-xl overflow-hidden">
