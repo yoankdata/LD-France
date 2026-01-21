@@ -4,25 +4,27 @@ import Image from "next/image";
 import Marquee from "react-fast-marquee";
 
 const brands = [
-    // Marques confirmé sur LinkedIn (K-Beauty & Pharma)
+    // K-Beauty & Cosmétiques
     { name: "L'Oréal", logo: "https://cdn.worldvectorlogo.com/logos/loreal.svg" },
-    { name: "Medicube", logo: "https://img.logo.dev/medicube.us?token=pk_X_1Z2Y3ZSR6aQ1b2c3d4e5" }, // Fallback sur logo.dev ou brandfetch si possible, j'utilise une URL générique Brandfetch ci-dessous
-    { name: "Anua", logo: "https://cdn.brandfetch.io/anua.kr/theme/dark/logo" },
-    { name: "Biodance", logo: "https://cdn.brandfetch.io/biodance.kr/theme/dark/logo" },
-    { name: "Colgate", logo: "https://cdn.worldvectorlogo.com/logos/colgate.svg" },
     { name: "Nivea", logo: "https://cdn.worldvectorlogo.com/logos/nivea.svg" },
+    { name: "Colgate", logo: "https://cdn.worldvectorlogo.com/logos/colgate.svg" },
 
-    // Marques Historiques
+    // K-Beauty (logos simplifiés en texte si CDN échoue)
+    { name: "Anua", logo: "https://logo.clearbit.com/anua.kr" },
+    { name: "Biodance", logo: "https://logo.clearbit.com/biodance.kr" },
+
+    // FMCG & Boissons
     { name: "Coca-Cola", logo: "https://cdn.worldvectorlogo.com/logos/coca-cola-2021.svg" },
+    { name: "Red Bull", logo: "https://cdn.worldvectorlogo.com/logos/red-bull.svg" },
+
+    // Jouets
+    { name: "Lego", logo: "https://cdn.worldvectorlogo.com/logos/lego.svg" },
     { name: "Mattel", logo: "https://cdn.worldvectorlogo.com/logos/mattel.svg" },
     { name: "Playmobil", logo: "https://cdn.worldvectorlogo.com/logos/playmobil.svg" },
     { name: "Hasbro", logo: "https://cdn.worldvectorlogo.com/logos/hasbro.svg" },
-    { name: "Red Bull", logo: "https://cdn.worldvectorlogo.com/logos/red-bull.svg" },
-    { name: "Lego", logo: "https://cdn.worldvectorlogo.com/logos/lego.svg" },
 
-    // Marques Entretien
-    { name: "Sanytol", logo: "https://cdn.brandfetch.io/sanytol.fr/logo" },
-    { name: "Ajax", logo: "https://cdn.brandfetch.io/ajax.com/logo" },
+    // Entretien (logos fiables)
+    { name: "Ajax", logo: "https://cdn.worldvectorlogo.com/logos/ajax-1.svg" },
 ];
 
 export function BrandStrip() {
