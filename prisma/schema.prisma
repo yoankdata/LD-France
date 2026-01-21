@@ -1,0 +1,243 @@
+// Schéma Prisma pour LDFRANCE - Plateforme B2B de vente en gros
+// Stack : Next.js 15 + Supabase (PostgreSQL) + Tailwind CSS
+// Génération des types : npx prisma generate
+// Push vers DB : npx prisma db push (développement) ou migrations Supabase (production)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// UTILISATEURS ET AUTHENTIFICATION
+// ============================================
+
+enum UserRole {
+  ADMIN           // Administrateur plateforme (gestion complète)
+  VERIFIED_CLIENT // Client professionnel vérifié (accès aux prix)
+  PENDING_CLIENT  // Client en attente de vérification
+}
+
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  name          String?
+  company       String? // Nom de l'entreprise (obligatoire pour clients B2B)
+  siret         String? // N° SIRET pour vérification (France)
+  vatNumber     String? // N° TVA intracommunautaire (UE)
+  phone         String?
+  role          UserRole @default(PENDING_CLIENT)
+  emailVerified Boolean  @default(false)
+  isActive      Boolean  @default(true) // Permet de désactiver un compte sans le supprimer
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  leads  Lead[] // Demandes de contact émises par le client
+  orders Order[] // Commandes passées
+
+  @@index([email])
+  @@index([role, isActive]) // Pour filtrer les clients vérifiés actifs
+}
+
+// ============================================
+// CATALOGUE PRODUITS
+// ============================================
+
+model Category {
+  id          String   @id @default(uuid())
+  name        String // Ex: "Hygiène & Nettoyage", "Alimentaire"
+  slug        String   @unique // Ex: "hygiene-nettoyage"
+  description String?
+  imageUrl    String? // Image de bannière de la catégorie
+  parentId    String? // Pour catégories hiérarchiques (ex: Hygiène > Nettoyage)
+  order       Int      @default(0) // Ordre d'affichage
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  parent   Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
+  children Category[] @relation("CategoryHierarchy")
+  products Product[]
+
+  @@index([slug])
+  @@index([parentId])
+  @@index([isActive, order]) // Pour récupérer les catégories actives triées
+}
+
+model Brand {
+  id           String   @id @default(uuid())
+  name         String   @unique // Ex: "Coca-Cola", "Sanytol"
+  slug         String   @unique // Ex: "coca-cola"
+  logoUrl      String? // URL du logo de la marque
+  countryCode  String? // Code ISO pays d'origine (ex: "FR", "US", "KR")
+  countryName  String? // Nom du pays en clair (ex: "France", "Corée du Sud")
+  description  String? // Texte SEO sur la marque
+  websiteUrl   String? // Site officiel de la marque
+  isActive     Boolean  @default(true)
+  isFeatured   Boolean  @default(false) // Marques mises en avant sur la homepage
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  products Product[]
+
+  @@index([slug])
+  @@index([isActive, isFeatured]) // Pour récupérer les marques featured actives
+}
+
+model Product {
+  id               String   @id @default(uuid())
+  sku              String   @unique // Référence produit (ex: "COCA-330-24")
+  name             String // Ex: "Coca-Cola Classic 330ml"
+  slug             String   @unique // URL SEO (ex: "coca-cola-classic-330ml")
+  shortDescription String? // Accroche courte (1 ligne)
+  description      String? // Description complète (SEO-friendly, markdown supporté)
+  metaTitle        String? // Titre SEO (<title> tag)
+  metaDescription  String? // Meta description SEO
+  imageUrl         String? // Image principale du produit
+  images           String[] // Tableau d'URLs pour galerie (JSON array avec Prisma)
+  unitType         String   @default("unité") // Ex: "unité", "carton de 24", "palette"
+  stockQuantity    Int      @default(0) // Stock disponible (simplifié, peut être déplacé vers un WMS)
+  isActive         Boolean  @default(true) // Publié ou brouillon
+  isFeatured       Boolean  @default(false) // Produit mis en avant
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  // Relations
+  brandId    String
+  brand      Brand       @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  categoryId String
+  category   Category    @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  priceTiers PriceTier[] // Prix dégressifs par paliers de quantité
+  leads      Lead[] // Produits mentionnés dans les demandes de contact
+  orderItems OrderItem[] // Produits commandés
+
+  @@index([sku])
+  @@index([slug])
+  @@index([categoryId, brandId]) // CRITÈRE PRINCIPAL : Recherche par catégorie + marque
+  @@index([isActive, isFeatured]) // Pour homepage et listes filtrées
+  @@index([name]) // Pour recherche textuelle (peut être converti en GIN index pour full-text)
+}
+
+// Prix dégressifs : Plus la quantité est élevée, plus le prix unitaire baisse
+model PriceTier {
+  id          String   @id @default(uuid())
+  productId   String
+  minQuantity Int // Quantité minimale pour ce palier (ex: 1, 50, 100, 500)
+  unitPrice   Decimal  @db.Decimal(10, 2) // Prix unitaire HT en euros (ex: 1.20€)
+  currency    String   @default("EUR")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  // Contrainte : Un produit ne peut pas avoir deux paliers avec la même quantité minimale
+  @@unique([productId, minQuantity])
+  @@index([productId]) // Pour récupérer rapidement tous les paliers d'un produit
+}
+
+// ============================================
+// GESTION DES LEADS (CRM Simplifié)
+// ============================================
+
+enum LeadSource {
+  WHATSAPP // Contact via le lien WhatsApp du site
+  FORM // Formulaire de contact web
+  EMAIL // Email direct
+  PHONE // Appel téléphonique
+  OTHER // Autre canal
+}
+
+enum LeadStatus {
+  NEW       // Nouveau lead non traité
+  CONTACTED // Lead contacté par l'équipe commerciale
+  QUOTED    // Devis envoyé
+  CONVERTED // Converti en commande
+  LOST      // Perdu (pas intéressé ou concurrent)
+}
+
+model Lead {
+  id          String      @id @default(uuid())
+  source      LeadSource // Provenance du lead
+  status      LeadStatus  @default(NEW)
+  name        String // Nom du contact
+  email       String?
+  phone       String? // Numéro WhatsApp ou téléphone
+  company     String? // Entreprise du prospect
+  message     String? // Message du formulaire ou notes
+  productId   String? // Produit d'intérêt (optionnel)
+  userId      String? // Si le lead est lié à un utilisateur enregistré
+  assignedTo  String? // ID de l'admin/commercial responsable du suivi
+  convertedAt DateTime? // Date de conversion en commande
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Relations
+  product Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  user    User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([status, createdAt]) // CRITÈRE PRINCIPAL : Dashboard admin (filtrer par statut + tri par date)
+  @@index([productId]) // Pour analyser quels produits génèrent le plus de leads
+  @@index([source]) // Pour suivre l'efficacité des canaux d'acquisition
+}
+
+// ============================================
+// COMMANDES (Optionnel pour MVP, mais prévu pour évolution)
+// ============================================
+
+enum OrderStatus {
+  DRAFT     // Panier en cours (pas encore validé)
+  PENDING   // En attente de validation admin
+  CONFIRMED // Confirmée, préparation en cours
+  SHIPPED   // Expédiée
+  DELIVERED // Livrée
+  CANCELLED // Annulée
+}
+
+model Order {
+  id              String      @id @default(uuid())
+  orderNumber     String      @unique // Ex: "LD-2026-00123"
+  userId          String
+  status          OrderStatus @default(PENDING)
+  subtotal        Decimal     @db.Decimal(10, 2) // Total HT
+  taxAmount       Decimal     @default(0) @db.Decimal(10, 2) // TVA (20% en France)
+  shippingCost    Decimal     @default(0) @db.Decimal(10, 2)
+  total           Decimal     @db.Decimal(10, 2) // Total TTC
+  notes           String? // Notes internes ou instructions de livraison
+  shippingAddress Json? // Adresse de livraison (JSON structuré)
+  billingAddress  Json? // Adresse de facturation
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  // Relations
+  user  User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items OrderItem[]
+
+  @@index([userId, createdAt]) // Pour historique des commandes par client
+  @@index([status]) // Pour dashboard admin (filtrer par statut)
+  @@index([orderNumber])
+}
+
+model OrderItem {
+  id         String   @id @default(uuid())
+  orderId    String
+  productId  String
+  quantity   Int // Quantité commandée
+  unitPrice  Decimal  @db.Decimal(10, 2) // Prix unitaire appliqué (sauvegardé = historique)
+  totalPrice Decimal  @db.Decimal(10, 2) // quantity * unitPrice
+  createdAt  DateTime @default(now())
+
+  // Relations
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  @@index([orderId])
+  @@index([productId]) // Pour analyser les produits les plus vendus
+}

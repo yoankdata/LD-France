@@ -1,0 +1,98 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Base - Minimalisme Corporate */
+    --background: 0 0% 100%;
+    /* #FFFFFF */
+    --foreground: 210 9% 20%;
+    /* #2D3436 (Approximation HSL: 210 9% 20% pour compatibilité Tailwind) */
+
+    /* Brand Identity */
+    --primary: 217 64% 11%;
+    /* #0A192F - Deep Navy d'autorité */
+    --primary-foreground: 0 0% 100%;
+
+    --accent-blue: 217 89% 61%;
+    /* #3B82F6 - Bleu nuit clair / Royal Blue */
+    --accent-blue-foreground: 0 0% 100%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222 47% 11%;
+
+    /* Accents & Status */
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215 16% 47%;
+
+    --accent: 217 89% 61%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    /* UI Elements */
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 217 89% 61%;
+
+    --radius: 0.5rem;
+    /* 8px rounding for softer look */
+
+    /* Custom Shadows - Soft & Corporate */
+    --shadow-soft: 0 20px 40px -4px rgba(0, 0, 0, 0.05);
+
+    /* Custom Colors */
+    --whatsapp: 142 70% 49%;
+  }
+}
+
+/* Utility classes for Custom Colors */
+@layer utilities {
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
+  }
+
+  .text-accent-blue {
+    color: hsl(var(--accent-blue));
+  }
+
+  .bg-accent-blue {
+    background-color: hsl(var(--accent-blue));
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    /* Optimisation ligatures Geist */
+  }
+
+  /* Lissage des titres pour la vibe "Vercel/Stripe" */
+  h1,
+  h2,
+  h3 {
+    @apply font-bold tracking-tight text-primary;
+    text-wrap: balance;
+  }
+
+  /* Animation subtile pour les interactions pro */
+  .transition-vibe {
+    @apply transition-all duration-300 ease-in-out;
+  }
+}
+
+/* Utilitaires spécifiques LD France */
+.bg-whatsapp {
+  background-color: hsl(var(--whatsapp));
+}
+
+.text-sky {
+  color: hsl(var(--accent));
+}
