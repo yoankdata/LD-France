@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Marquee from "react-fast-marquee";
+import { useEffect, useState } from "react";
 
 const brands = [
     // K-Beauty & Cosmétiques
@@ -28,6 +29,14 @@ const brands = [
 ];
 
 export function BrandStrip() {
+    const [speed, setSpeed] = useState(40);
+
+    useEffect(() => {
+        if (window.innerWidth < 768) {
+            setSpeed(70); // Plus rapide sur mobile pour plus de dynamisme
+        }
+    }, []);
+
     return (
         <section className="py-12 bg-white border-y border-zinc-100">
             <div className="container mx-auto px-4 md:px-8 mb-8 text-center">
@@ -35,7 +44,7 @@ export function BrandStrip() {
                     Marques Distribuées
                 </p>
             </div>
-            <Marquee gradient={true} speed={40} className="overflow-hidden">
+            <Marquee gradient={true} speed={speed} className="overflow-hidden">
                 <div className="flex items-center gap-16 px-8">
                     {brands.map((brand, i) => (
                         <div key={i} className="relative h-16 w-32 md:w-40 opacity-40 hover:opacity-100 transition-opacity duration-300 grayscale hover:grayscale-0 cursor-pointer flex items-center justify-center">

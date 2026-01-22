@@ -33,7 +33,7 @@ export const metadata: Metadata = {
         description: "Grossiste B2B basé en France : hygiène, cosmétique, K-Beauty et FMCG. Distribution professionnelle.",
         images: [
             {
-                url: "/og-image.jpg",
+                url: "/og-image.png",
                 width: 1200,
                 height: 630,
                 alt: "LD France - Grossiste B2B",
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
         card: "summary_large_image",
         title: "LD FRANCE | Grossiste B2B Hygiène & K-Beauty",
         description: "Grossiste B2B basé en France : hygiène, cosmétique, K-Beauty et FMCG.",
-        images: ["/og-image.jpg"],
+        images: ["/og-image.png"],
     },
     icons: {
         icon: "/favicon.ico",

@@ -11,7 +11,7 @@ export default function Home() {
         "@context": "https://schema.org",
         "@type": "WholesaleStore",
         "name": "LD France Distribution",
-        "image": "https://ldfranceimport.com/logo.png",
+        "image": "https://ldfranceimport.com/logo.jpg",
         "description": "Grossiste B2B en cosmétiques coréens et produits d'hygiène.",
         "address": {
             "@type": "PostalAddress",
