@@ -32,7 +32,7 @@ const features = [
 export function WhyChooseUs() {
     return (
         <section className="py-32 bg-white">
-            <div className="container mx-auto px-6">
+            <div className="container mx-auto px-4 md:px-8">
 
                 {/* En-tête de section minimaliste */}
                 <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-20">

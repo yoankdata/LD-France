@@ -11,7 +11,7 @@ export function Hero() {
             {/* Arrière-plan épuré - Suppression de la Grid et ajout d'un dégradé radial très subtil */}
             <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-blue-50/50 via-transparent to-transparent"></div>
 
-            <div className="container mx-auto px-6 z-10 relative">
+            <div className="container mx-auto px-4 md:px-8 z-10 relative">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
 
                     {/* Left Content (Cols 1-7) */}
@@ -39,13 +39,6 @@ export function Hero() {
                                     Accéder au catalogue
                                     <ChevronRight className="w-4 h-4" />
                                 </a>
-                            </Button>
-                            <Button
-                                asChild
-                                variant="outline"
-                                className="h-14 px-8 text-base font-semibold border-slate-200 text-slate-900 hover:bg-slate-900 hover:text-white hover:border-slate-900 rounded-none transition-all"
-                            >
-                                <Link href="/contact">Nous contacter</Link>
                             </Button>
                         </div>
 

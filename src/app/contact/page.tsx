@@ -13,7 +13,7 @@ export default function ContactPage() {
         <>
             <Navbar />
             <main className="min-h-screen bg-white pt-32 pb-20">
-                <div className="container mx-auto px-6">
+                <div className="container mx-auto px-4 md:px-8">
                     <div className="max-w-xl mx-auto">
                         <div className="text-center mb-12">
                             <span className="text-[11px] font-bold tracking-[0.3em] text-blue-600 uppercase mb-4 block">

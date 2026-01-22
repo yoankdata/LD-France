@@ -11,8 +11,8 @@ export function Navbar() {
 
     return (
         <>
-            <header className="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md transition-all duration-300 border-b border-transparent shadow-soft">
-                <div className="container mx-auto px-4 h-24 flex items-center justify-between">
+            <header className="fixed top-0 w-full z-50 bg-white transition-all duration-300 border-b border-transparent shadow-soft">
+                <div className="container mx-auto px-4 h-20 md:h-24 flex items-center justify-between">
                     {/* Logo */}
                     <Link href="/" className="flex items-center group relative z-50">
                         <Image
@@ -20,21 +20,18 @@ export function Navbar() {
                             alt="LD France - Grossiste B2B"
                             width={200}
                             height={60}
-                            className="h-14 w-auto object-contain mix-blend-multiply transition-opacity duration-300 group-hover:opacity-90"
+                            className="h-10 md:h-14 w-auto object-contain mix-blend-multiply transition-opacity duration-300 group-hover:opacity-90"
                             priority
                         />
                     </Link>
 
                     {/* Actions - Clean & Minimal */}
                     <div className="flex items-center gap-6">
-                        <div className="hidden md:flex flex-col items-end text-right mr-2">
-                            <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mb-1">Service Pro</span>
-                            <span className="text-sm font-medium text-foreground tracking-tight">Support En Ligne 7j/7</span>
-                        </div>
-
-                        <Button asChild variant="ghost" className="hidden md:flex font-medium text-muted-foreground hover:text-primary hover:bg-transparent transition-colors">
+                        <Button asChild variant="outline" className="hidden md:flex rounded-full border-slate-200 text-slate-600 hover:text-slate-900 hover:border-slate-300 hover:bg-slate-50 transition-all font-medium px-6">
                             <Link href="/contact">Contact</Link>
                         </Button>
+
+
                         <Button asChild className="hidden sm:flex bg-primary text-white font-medium rounded-full px-6 shadow-soft hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
                             <a href="https://wa.me/33771029911?text=Bonjour,%20je%20souhaite%20accéder%20au%20catalogue." target="_blank" rel="noopener noreferrer">
                                 Accès Catalogue
